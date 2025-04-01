@@ -1,23 +1,22 @@
-import { View, Text, SafeAreaView, StyleSheet } from 'react-native'
-import Card from '@/components/Card'
+import Wallet from '@/components/Wallet/Wallet';
+import React, { useEffect, useRef } from 'react';
+import { View, Text, SafeAreaView, StyleSheet, Animated, FlatList } from 'react-native';
+
 
 
 const CardList = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <Text>Card List</Text>
-      <Card />
+      <Wallet />
     </SafeAreaView>
-  )
-}
+  );
+};
 
-export default CardList
+export default CardList;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-
-    backgroundColor: '#b58',
+    margin: 0
   },
 
 });
