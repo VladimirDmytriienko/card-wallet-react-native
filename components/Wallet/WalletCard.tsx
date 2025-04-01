@@ -5,7 +5,7 @@ import Card, {
   CARD_HEIGHT as DEFAULT_CARD_HEIGHT,
 } from "./Card";
 
-export const MARGIN = 16;
+export const MARGIN = 8;
 export const CARD_HEIGHT = DEFAULT_CARD_HEIGHT + MARGIN * 2;
 const { height: wHeight } = Dimensions.get("window");
 const height = wHeight - 64;

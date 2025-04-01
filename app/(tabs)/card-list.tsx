@@ -1,4 +1,6 @@
-import Wallet from '@/components/Wallet/Wallet';
+
+import CardsListComponent from '@/components/Wallet/CardsListComponent';
+import Wallet from '@/components/Wallet/WalletFlatList';
 import React, { useEffect, useRef } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, Animated, FlatList } from 'react-native';
 
@@ -6,9 +8,9 @@ import { View, Text, SafeAreaView, StyleSheet, Animated, FlatList } from 'react-
 
 const CardList = () => {
   return (
-    <SafeAreaView style={styles.container}>
-      <Wallet />
-    </SafeAreaView>
+
+    <CardsListComponent />
+
   );
 };
 
@@ -16,7 +18,8 @@ export default CardList;
 
 const styles = StyleSheet.create({
   container: {
-    margin: 0
+    flex: 1,
+    backgroundColor: "#f5f5f5", // Светлый фон, чтобы тени выделялись
+    paddingHorizontal: 0, // НЕ ставим отступы, иначе тени могут резаться
   },
-
 });

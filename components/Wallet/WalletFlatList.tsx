@@ -35,7 +35,7 @@ const Wallet = () => {
   return (
     <AnimatedFlatList
       scrollEventThrottle={16}
-      bounces={false}
+      bounces={true}
       data={cards}
       renderItem={({ index, item: { type } }) => (
         <WalletCard {...{ index, y, type }} />
