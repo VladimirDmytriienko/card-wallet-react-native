@@ -6,6 +6,7 @@ declare module 'expo-barcode-generator' {
     background?: string;
     foreground?: string;
     rotation?: number;
+    width?: number;
   }
 
   interface BarcodeProps extends ViewProps {

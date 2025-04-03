@@ -1,6 +1,7 @@
 import React from "react";
 import { View, FlatList, Text, Dimensions, StyleSheet, StatusBar, Animated } from "react-native";
-
+import { Link } from 'expo-router';
+import { ThemedView } from '../ThemedView';
 const { height, width } = Dimensions.get("window");
 const ITEM_HEIGHT = 80;
 const ITEM_SIZE = ITEM_HEIGHT + 12;
@@ -15,7 +16,7 @@ const CardsListComponent = () => {
   const scrollY = React.useRef(new Animated.Value(0)).current;
 
   return (
-    <View style={styles.container}>
+    <ThemedView >
       <Animated.FlatList
         data={mockData}
         keyExtractor={(item) => item.id}
@@ -32,7 +33,11 @@ const CardsListComponent = () => {
             inputRange: opacityInputRange,
             outputRange: [1, 1, 1, 0],
           });
-
+          const cardData = {
+            id: item.id,
+            title: item.title,
+            color: 'f5f5',
+          };
           return (
             <Animated.View
               style={[
@@ -43,7 +48,13 @@ const CardsListComponent = () => {
                 },
               ]}
             >
-              <Text style={styles.itemText}>{item.title}</Text>
+              <Link href={{
+                pathname: '/modal',
+                params: cardData,
+              }} style={styles.link}>
+                <Text style={styles.itemText}>{item.title}</Text>
+
+              </Link>
             </Animated.View>
           );
         }}
@@ -58,15 +69,15 @@ const CardsListComponent = () => {
           paddingBottom: 20,
         }}
       />
-    </View>
+    </ThemedView>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
+  // container: {
+  //   flex: 1,
+  //   backgroundColor: "#f5f5f5",
+  // },
   item: {
     height: ITEM_HEIGHT,
     justifyContent: "center",
