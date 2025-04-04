@@ -1,12 +1,27 @@
 import { Modal, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, TextInput, ScrollView } from 'react-native'
 import { CameraView, CameraType, useCameraPermissions, BarcodeScanningResult, BarcodeType } from 'expo-camera';
 import { BlurView } from 'expo-blur';
-import { SUPPORTED_BARCODE_TYPES } from '../modalScannerServices';
+import { ScannedCode, SUPPORTED_BARCODE_TYPES, normalizeBarcodeType } from '../modalScannerServices';
 import { IconSymbol } from '@/components/ui/IconSymbol'
+import { useState } from 'react';
+import { useModalScanner } from '@/components/ModalScannerContext';
+import ModalHeader from '../ModalHeader/ModalHeader';
 
 const CameraViewWrapper = () => {
-  const handleBarcodeScanned = () => console.log('Barcode scanned!')
-  const handleCamera = () => console.log('Camera closed!');
+  const { visible, setVisible, setCode, code } = useModalScanner()
+  const [isProcessing, setIsProcessing] = useState(false);
+  const handleBarcodeScanned = async ({ data, type }: BarcodeScanningResult) => {
+    if (isProcessing) return
+    setIsProcessing(true);
+    const normalizedType = normalizeBarcodeType(type);
+    const newCode: ScannedCode = {
+      data,
+      type: normalizedType,
+      timestamp: new Date(),
+    };
+    setCode(newCode);
+    setTimeout(() => setIsProcessing(false), 500);
+  };
 
   return (
     <CameraView
@@ -17,19 +32,7 @@ const CameraViewWrapper = () => {
       }}
       onBarcodeScanned={handleBarcodeScanned}
     >
-      <BlurView intensity={20} style={styles.header}>
-        <Text style={styles.headerTitle}>Scan your code</Text>
-        <TouchableOpacity
-          style={styles.closeButton}
-          onPress={handleCamera}
-        >
-          <IconSymbol
-            size={24}
-            color="#FFFFFF"
-            name="xmark.circle.fill"
-          />
-        </TouchableOpacity>
-      </BlurView>
+      <ModalHeader title='Scan your code' />
       <View style={styles.scanOverlay}>
         <View style={styles.scanFrame}>
           <View style={styles.scanTextContainer}>
@@ -45,31 +48,6 @@ export default CameraViewWrapper
 
 
 const styles = StyleSheet.create({
-  header: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderBottomWidth: 0,
-    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  closeButton: {
-    padding: 12,
-    backgroundColor: 'rgba(255, 255, 255, 0.1)',
-    borderRadius: 45,
-  },
-  headerTitle: {
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: '600',
-    letterSpacing: 0.5,
-  },
   camera: {
     flex: 1,
     width: '100%',

@@ -43,6 +43,13 @@ export default function TabLayout() {
       />
 
       <Tabs.Screen
+        name="add-card"
+        options={{
+          title: 'add card',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="plus.app" color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="explore"
         options={{
           title: 'Explore',

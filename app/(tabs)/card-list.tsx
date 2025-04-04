@@ -11,7 +11,6 @@ import ModalScanner from '@/components/ModalScanner/ModalScanner';
 const CardList = () => {
   return (
     <View>
-      <ModalScanner />
       <CardsListComponent />
     </View>
 

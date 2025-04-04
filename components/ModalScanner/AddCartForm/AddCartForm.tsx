@@ -9,46 +9,35 @@ import {
 } from 'react-native';
 import { Barcode } from 'expo-barcode-generator';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { useState } from 'react';
 import { Colors } from '@/constants/Colors';
-
-const colorOptions = [
-  { label: 'White', value: '#FFFFFF' },
-  { label: 'Black', value: '#000000' },
-  { label: 'Gray', value: '#808080' },
-  { label: 'Red', value: '#FF0000' },
-  { label: 'Sunset', value: '#FF2D55' },
-  { label: 'Ocean', value: '#00BCD4' },
-  { label: 'Forest', value: '#2ECC71' },
-  { label: 'Lavender', value: '#9B59B6' },
-  { label: 'Coral', value: '#FF9800' },
-  { label: 'Mint', value: '#00E676' },
-  { label: 'Sky', value: '#2196F3' },
-  { label: 'Peach', value: '#FFC107' },
-  { label: 'Rose', value: '#E91E63' },
-];
-
-const validationSchema = Yup.object().shape({
-  name: Yup.string().required('Required'),
-  notes: Yup.string(),
-  backgroundColor: Yup.string().required(),
-});
+import { validationSchema } from '@/components/ModalScanner/modalScannerServices';
+import { useModalScanner } from '@/components/ModalScannerContext';
+import BarcodeWrapper from './BarcodeWrapper';
+import ColorPicker from './ColorPicker';
+import ModalHeader from '../ModalHeader/ModalHeader';
 
 const AddCartForm = () => {
+  const { visible, setVisible, setCode, code } = useModalScanner()
+
   const scheme = useColorScheme() || 'light';
   const colors = Colors[scheme];
-  const [currentCode, setCurrentCode] = useState(null);
+  const inputStyle = [
+    styles.formInput,
+    {
+      borderColor: colors.icon,
+      color: colors.text,
+      backgroundColor: scheme === 'dark' ? '#1E1E1E' : '#fff',
+    },
+  ];
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
+      <ModalHeader title='Add name of a card' position='relative' />
       <Formik
         initialValues={{
           name: '',
           notes: '',
           backgroundColor: '#FFFFFF',
-          isGradient: false,
-          gradientColors: ['#FFFFFF', '#FFFFFF'],
         }}
         validationSchema={validationSchema}
         onSubmit={(values) => console.log(values)}
@@ -59,14 +48,7 @@ const AddCartForm = () => {
               <View style={styles.formGroup}>
                 <Text style={[styles.formLabel, { color: colors.text }]}>Name</Text>
                 <TextInput
-                  style={[
-                    styles.formInput,
-                    {
-                      borderColor: colors.icon,
-                      color: colors.text,
-                      backgroundColor: scheme === 'dark' ? '#1E1E1E' : '#fff',
-                    },
-                  ]}
+                  style={inputStyle}
                   placeholder="Enter a name for this code"
                   placeholderTextColor={scheme === 'dark' ? '#888' : '#aaa'}
                   value={values.name}
@@ -77,14 +59,7 @@ const AddCartForm = () => {
               <View style={styles.formGroup}>
                 <Text style={[styles.formLabel, { color: colors.text }]}>Notes</Text>
                 <TextInput
-                  style={[
-                    styles.formInput,
-                    {
-                      borderColor: colors.icon,
-                      color: colors.text,
-                      backgroundColor: scheme === 'dark' ? '#1E1E1E' : '#fff',
-                    },
-                  ]}
+                  style={inputStyle}
                   placeholder="Add any notes (optional)"
                   placeholderTextColor={scheme === 'dark' ? '#888' : '#aaa'}
                   value={values.notes}
@@ -96,54 +71,32 @@ const AddCartForm = () => {
               <View style={styles.formGroup}>
                 <Text style={[styles.formLabel, { color: colors.text }]}>Background Color</Text>
                 <View style={styles.colorPickerContainer}>
-                  {colorOptions.map((color) => {
-                    const isSelected = values.backgroundColor === color.value;
-                    const colorStyle = {
-                      backgroundColor: color.value,
-                      ...(isSelected && {
-                        borderWidth: 2,
-                        borderColor: scheme === 'dark' ? '#fff' : '#000',
-                      }),
-                    };
-
-                    return (
-                      <TouchableOpacity
-                        key={color.value}
-                        style={[styles.colorOption, colorStyle]}
-                        onPress={() => setFieldValue('backgroundColor', color.value)}
-                      />
-                    );
-                  })}
+                  <ColorPicker
+                    selectedColor={values.backgroundColor}
+                    onSelect={(color) => setFieldValue('backgroundColor', color)}
+                    containerStyle={styles.colorPickerContainer}
+                  />
                 </View>
               </View>
+              <BarcodeWrapper backgroundColor={values.backgroundColor} shadowColor={colors.shadow}>
+                {!!code.data && code.type ? (
+                  <Barcode
+                    value={code.data}
+                    options={{
+                      format: code.type,
+                      background: '#FFFFFF',
+                    }}
+                  />
+                ) : null}
+              </BarcodeWrapper >
 
-              <View
-                style={[
-                  styles.barcodeWrapper,
-                  {
-                    backgroundColor: values.backgroundColor,
-                    shadowColor: colors.shadow,
-                  },
-                ]}
-              >
-                <Barcode
-                  value="3000003062224"
-                  options={{
-                    format: 'ean13',
-                    background: '#FFFFFF',
-                  }}
-                />
-              </View>
             </ScrollView>
 
             <View style={styles.formFooter}>
               <TouchableOpacity
                 style={[
                   styles.saveButton,
-                  {
-                    backgroundColor:
-                      scheme === 'dark' ? '#fff' : '#000',
-                  },
+                  { backgroundColor: scheme === 'dark' ? '#fff' : '#000' },
                 ]}
                 onPress={() => handleSubmit()}
               >
@@ -156,7 +109,6 @@ const AddCartForm = () => {
                   Save Code
                 </Text>
               </TouchableOpacity>
-
             </View>
           </>
         )}
@@ -172,6 +124,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   formScroll: {
+    paddingTop: 65,
     padding: 20,
   },
   formGroup: {
@@ -207,6 +160,7 @@ const styles = StyleSheet.create({
     height: 40,
     margin: 5,
     borderRadius: 8,
+    overflow: 'hidden',
   },
   barcodeWrapper: {
     justifyContent: 'center',
@@ -216,5 +170,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ccc',
     elevation: 2,
+    marginTop: 20,
   },
 });
