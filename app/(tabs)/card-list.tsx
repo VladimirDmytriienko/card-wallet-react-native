@@ -1,23 +1,22 @@
-import { View, Text, SafeAreaView, StyleSheet } from 'react-native'
-import Card from '@/components/Card'
+
+import { ThemedView } from '@/components/ThemedView';
+import CardsListComponent from '@/components/Wallet/CardsListComponent';
+
+import React, { useEffect, useRef } from 'react';
+import { View, Text, SafeAreaView, StyleSheet, Animated, FlatList } from 'react-native';
+import Modal from '../modal';
+import ModalScanner from '@/components/ModalScanner/ModalScanner';
 
 
 const CardList = () => {
   return (
-    <SafeAreaView style={styles.container}>
-      <Text>Card List</Text>
-      <Card />
-    </SafeAreaView>
-  )
-}
+    <View>
+      <CardsListComponent />
+    </View>
 
-export default CardList
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  );
+};
 
-    backgroundColor: '#b58',
-  },
+export default CardList;
 
-});
