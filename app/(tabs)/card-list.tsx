@@ -4,12 +4,16 @@ import CardsListComponent from '@/components/Wallet/CardsListComponent';
 
 import React, { useEffect, useRef } from 'react';
 import { View, Text, SafeAreaView, StyleSheet, Animated, FlatList } from 'react-native';
+import Modal from '../modal';
+import ModalScanner from '@/components/ModalScanner/ModalScanner';
 
 
 const CardList = () => {
   return (
-
-    <CardsListComponent />
+    <View>
+      <ModalScanner />
+      <CardsListComponent />
+    </View>
 
 
   );

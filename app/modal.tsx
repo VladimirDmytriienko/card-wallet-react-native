@@ -7,7 +7,6 @@ import Animated, { FadeIn, SlideInDown } from 'react-native-reanimated';
 
 export default function Modal() {
   const { title, color } = useLocalSearchParams();
-  console.log(title, color);
 
   return (
     <Animated.View
@@ -19,7 +18,6 @@ export default function Modal() {
         <Link href="../" asChild>
           <TouchableOpacity
             style={styles.closeButton}
-
           >
             <IconSymbol
               size={24}
@@ -35,7 +33,6 @@ export default function Modal() {
       >
         <Barcode
           value='3000003062224'
-
           options={{
             format: 'ean13',
             background: '#FFFFFF',
