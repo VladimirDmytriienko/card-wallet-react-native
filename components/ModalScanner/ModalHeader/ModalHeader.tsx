@@ -2,7 +2,7 @@ import React from 'react'
 import { Modal, Text, View, TouchableOpacity, StyleSheet } from 'react-native'
 import { BlurView } from 'expo-blur';
 import { IconSymbol } from '@/components/ui/IconSymbol'
-import { useModalScanner } from '@/components/ModalScannerContext';
+import { useModalScanner } from '@/components/ModalScanner/ModalScannerContext';
 import { boldCode } from '../ModalScanner';
 import { useRouter } from 'expo-router';
 interface ModalHeaderProps {
@@ -21,7 +21,7 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({ title, position }) => {
         onPress={(handleCamera) => {
           setVisible(false)
           setCode(boldCode)
-          router.navigate('/card-list')
+          router.back()
         }}
       >
         <IconSymbol

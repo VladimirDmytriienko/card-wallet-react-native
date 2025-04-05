@@ -1,10 +1,8 @@
 import { Modal, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, TextInput, ScrollView } from 'react-native'
-import { CameraView, CameraType, useCameraPermissions, BarcodeScanningResult, BarcodeType } from 'expo-camera';
-import { BlurView } from 'expo-blur';
+import { CameraView, CameraType, useCameraPermissions, BarcodeScanningResult, BarcodeType } from 'expo-camera'; 'expo-blur';
 import { ScannedCode, SUPPORTED_BARCODE_TYPES, normalizeBarcodeType } from '../modalScannerServices';
-import { IconSymbol } from '@/components/ui/IconSymbol'
 import { useState } from 'react';
-import { useModalScanner } from '@/components/ModalScannerContext';
+import { useModalScanner } from '@/components/ModalScanner/ModalScannerContext';
 import ModalHeader from '../ModalHeader/ModalHeader';
 
 const CameraViewWrapper = () => {

@@ -2,7 +2,8 @@ import { Modal, View } from 'react-native'
 import CameraViewWrapper from './CameraViewWrapper/CameraViewWrapper';
 import AddCartForm from './AddCartForm/AddCartForm';
 import React, { useState } from 'react';
-import { ModalContext } from '../ModalScannerContext';
+import { useFocusEffect } from 'expo-router';
+import { ModalContext } from './ModalScannerContext';
 import { ScannedCode } from './modalScannerServices';
 import { useRouter } from 'expo-router';
 
@@ -13,8 +14,11 @@ export const boldCode = {
 }
 
 const ModalScanner = () => {
-  const { navigate } = useRouter();
-  const [visible, setVisible] = useState(true);
+  const router = useRouter()
+  const [visible, setVisible] = useState(true)
+  useFocusEffect(() => {
+    setVisible(true)
+  })
   const [code, setCode] = useState<ScannedCode>(boldCode)
   return (
     <ModalContext.Provider value={{ visible, setVisible, code, setCode }}>
@@ -25,7 +29,8 @@ const ModalScanner = () => {
           presentationStyle="formSheet"
           onRequestClose={() => {
             setVisible(false)
-            navigate('/card-list')
+            // router.navigate('/card-list')
+            router.back()
           }}
         >
           {code.data ? <AddCartForm /> : <CameraViewWrapper />}
