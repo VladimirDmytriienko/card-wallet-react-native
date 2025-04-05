@@ -1,5 +1,5 @@
 import { createContext, useContext } from 'react';
-import { ScannedCode } from './ModalScanner/modalScannerServices';
+import { ScannedCode } from './modalScannerServices';
 
 export type ModalContextType = {
   visible: boolean;

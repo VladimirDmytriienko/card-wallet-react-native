@@ -11,7 +11,7 @@ import { Barcode } from 'expo-barcode-generator';
 import { Formik } from 'formik';
 import { Colors } from '@/constants/Colors';
 import { validationSchema } from '@/components/ModalScanner/modalScannerServices';
-import { useModalScanner } from '@/components/ModalScannerContext';
+import { useModalScanner } from '@/components/ModalScanner/ModalScannerContext';
 import BarcodeWrapper from './BarcodeWrapper';
 import ColorPicker from './ColorPicker';
 import ModalHeader from '../ModalHeader/ModalHeader';
@@ -124,7 +124,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   formScroll: {
-    paddingTop: 65,
+    paddingTop: 70,
     padding: 20,
   },
   formGroup: {
