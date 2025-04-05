@@ -15,8 +15,11 @@ import { useModalScanner } from '@/components/ModalScanner/ModalScannerContext';
 import BarcodeWrapper from './BarcodeWrapper';
 import ColorPicker from './ColorPicker';
 import ModalHeader from '../ModalHeader/ModalHeader';
+import { useCards } from '@/react-query/useCards';
+import { router } from 'expo-router';
 
 const AddCartForm = () => {
+  const { addCard } = useCards()
   const { visible, setVisible, setCode, code } = useModalScanner()
 
   const scheme = useColorScheme() || 'light';
@@ -29,18 +32,33 @@ const AddCartForm = () => {
       backgroundColor: scheme === 'dark' ? '#1E1E1E' : '#fff',
     },
   ];
-
+  type Card = {
+    data: string;
+    type: string;
+    timestamp: Date;
+    name?: string;
+    notes?: string;
+    backgroundColor?: string;
+  };
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ModalHeader title='Add name of a card' position='relative' />
       <Formik
         initialValues={{
+          data: code.data,
+          type: code.type,
+          timestamp: new Date(),
           name: '',
           notes: '',
           backgroundColor: '#FFFFFF',
         }}
         validationSchema={validationSchema}
-        onSubmit={(values) => console.log(values)}
+        onSubmit={(values) => {
+          addCard(values)
+          setVisible(false)
+          router.navigate('/explore')
+        }
+        }
       >
         {({ handleChange, handleSubmit, values, setFieldValue }) => (
           <>
@@ -113,7 +131,7 @@ const AddCartForm = () => {
           </>
         )}
       </Formik>
-    </View>
+    </View >
   );
 };
 
