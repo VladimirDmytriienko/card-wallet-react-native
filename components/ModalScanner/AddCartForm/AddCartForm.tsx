@@ -31,15 +31,9 @@ const AddCartForm = () => {
       color: colors.text,
       backgroundColor: scheme === 'dark' ? '#1E1E1E' : '#fff',
     },
-  ];
-  type Card = {
-    data: string;
-    type: string;
-    timestamp: Date;
-    name?: string;
-    notes?: string;
-    backgroundColor?: string;
-  };
+  ]
+
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ModalHeader title='Add name of a card' position='relative' />
@@ -56,7 +50,7 @@ const AddCartForm = () => {
         onSubmit={(values) => {
           addCard(values)
           setVisible(false)
-          router.navigate('/explore')
+          router.navigate('/')
         }
         }
       >
@@ -96,6 +90,7 @@ const AddCartForm = () => {
                   />
                 </View>
               </View>
+              <Text>{code.data}</Text>
               <BarcodeWrapper backgroundColor={values.backgroundColor} shadowColor={colors.shadow}>
                 {!!code.data && code.type ? (
                   <Barcode

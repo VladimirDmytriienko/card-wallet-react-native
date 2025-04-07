@@ -1,16 +1,35 @@
-import { Modal, SafeAreaView, StyleSheet, Text, TouchableOpacity, View, TextInput, ScrollView } from 'react-native'
-import { CameraView, CameraType, useCameraPermissions, BarcodeScanningResult, BarcodeType } from 'expo-camera'; 'expo-blur';
+import {
+  Modal,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  TextInput,
+  ScrollView,
+} from 'react-native';
+import {
+  CameraView,
+  CameraType,
+  useCameraPermissions,
+  BarcodeScanningResult,
+  BarcodeType,
+} from 'expo-camera';
+import { BlurView } from 'expo-blur';
 import { ScannedCode, SUPPORTED_BARCODE_TYPES, normalizeBarcodeType } from '../modalScannerServices';
 import { useState } from 'react';
 import { useModalScanner } from '@/components/ModalScanner/ModalScannerContext';
 import ModalHeader from '../ModalHeader/ModalHeader';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const CameraViewWrapper = () => {
-  const { visible, setVisible, setCode, code } = useModalScanner()
+  const { visible, setVisible, setCode, code } = useModalScanner();
   const [isProcessing, setIsProcessing] = useState(false);
+
   const handleBarcodeScanned = async ({ data, type }: BarcodeScanningResult) => {
-    if (isProcessing) return
+    if (isProcessing) return;
     setIsProcessing(true);
+
     const normalizedType = normalizeBarcodeType(type);
     const newCode: ScannedCode = {
       data,
@@ -24,26 +43,24 @@ const CameraViewWrapper = () => {
   return (
     <CameraView
       style={styles.camera}
-      facing={'back'}
+      facing="back"
       barcodeScannerSettings={{
         barcodeTypes: SUPPORTED_BARCODE_TYPES as BarcodeType[],
       }}
       onBarcodeScanned={handleBarcodeScanned}
     >
-      <ModalHeader title='Scan your code' />
+      <ModalHeader title="Scan your code" />
       <View style={styles.scanOverlay}>
-        <View style={styles.scanFrame}>
-          <View style={styles.scanTextContainer}>
-            <Text style={styles.scanText}>Position barcode in frame to scan</Text>
-          </View>
-        </View>
+        <BlurView intensity={30} tint="dark" style={styles.scanFrame}>
+          <MaterialCommunityIcons name="barcode-scan" size={64} color="#fff" />
+        </BlurView>
+        <Text style={styles.scanText}>Align the barcode within the frame</Text>
       </View>
     </CameraView>
-  )
-}
+  );
+};
 
-export default CameraViewWrapper
-
+export default CameraViewWrapper;
 
 const styles = StyleSheet.create({
   camera: {
@@ -52,38 +69,27 @@ const styles = StyleSheet.create({
   },
   scanOverlay: {
     flex: 1,
-    backgroundColor: 'transparent',
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: 'transparent',
     padding: 20,
-
   },
   scanFrame: {
-    width: 280,
-    height: 280,
-    borderWidth: 2,
-    borderColor: 'rgba(255, 255, 255, 0.3)',
-    borderRadius: 20,
-    position: 'relative',
-    marginBottom: 24,
-    backgroundColor: 'rgba(0, 0, 0, 0.4)',
-  },
-
-  scanTextContainer: {
-    position: 'absolute',
-    top: '50%',
-    left: 0,
-    right: 0,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 16,
+    width: '100%',
+    aspectRatio: 2.5,
     borderRadius: 12,
-    marginHorizontal: 20,
+    borderWidth: 2,
+    borderColor: 'rgba(255, 255, 255, 0.6)',
+    justifyContent: 'center',
+    alignItems: 'center',
+    overflow: 'hidden',
+    marginBottom: 24,
   },
   scanText: {
-    color: '#FFFFFF',
+    color: '#fff',
     fontSize: 16,
     textAlign: 'center',
-    letterSpacing: 0.5,
+    marginTop: 12,
+    paddingHorizontal: 16,
   },
-})
+});

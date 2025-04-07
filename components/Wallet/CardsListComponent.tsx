@@ -2,6 +2,8 @@ import React from "react";
 import { View, FlatList, Text, Dimensions, StyleSheet, StatusBar, Animated } from "react-native";
 import { Link } from 'expo-router';
 import { ThemedView } from '../ThemedView';
+import { useCards } from '@/react-query/useCards';
+import EmptyList from '../EmptyList/EmptyList';
 const { height, width } = Dimensions.get("window");
 const ITEM_HEIGHT = 80;
 const ITEM_SIZE = ITEM_HEIGHT + 12;
@@ -13,13 +15,16 @@ const mockData = Array.from({ length: 20 }, (_, i) => ({
 }));
 
 const CardsListComponent = () => {
+  const { cards } = useCards()
   const scrollY = React.useRef(new Animated.Value(0)).current;
 
+
   return (
-    <ThemedView >
+    <ThemedView style={styles.container}>
+      <EmptyList />
       <Animated.FlatList
-        data={mockData}
-        keyExtractor={(item) => item.id}
+        data={cards}
+        keyExtractor={(item, index) => index.toString()}
         renderItem={({ item, index }) => {
           const inputRange = [-1, 0, ITEM_SIZE * index, ITEM_SIZE * (index + 2)];
           const opacityInputRange = [-1, 0, ITEM_SIZE * index, ITEM_SIZE * (index + 1)];
@@ -34,10 +39,11 @@ const CardsListComponent = () => {
             outputRange: [1, 1, 1, 0],
           });
           const cardData = {
-            id: item.id,
-            title: item.title,
-            color: 'f5f5',
-          };
+            title: item.name,
+            color: JSON.stringify(item.backgroundColor),
+            code: item.data,
+            type: item.type
+          }
           return (
             <Animated.View
               style={[
@@ -50,9 +56,9 @@ const CardsListComponent = () => {
             >
               <Link href={{
                 pathname: '/modal',
-                params: cardData,
-              }} style={styles.link}>
-                <Text style={styles.itemText}>{item.title}</Text>
+                params: cardData
+              }} style={''}>
+                <Text style={styles.itemText}>{item.name}</Text>
 
               </Link>
             </Animated.View>
@@ -74,10 +80,10 @@ const CardsListComponent = () => {
 };
 
 const styles = StyleSheet.create({
-  // container: {
-  //   flex: 1,
-  //   backgroundColor: "#f5f5f5",
-  // },
+  container: {
+    flexGrow: 1,
+  },
+
   item: {
     height: ITEM_HEIGHT,
     justifyContent: "center",
