@@ -17,6 +17,7 @@ import ColorPicker from './ColorPicker';
 import ModalHeader from '../ModalHeader/ModalHeader';
 import { useCards } from '@/react-query/useCards';
 import { router } from 'expo-router';
+import { boldCode } from '../ModalScanner';
 
 const AddCartForm = () => {
   const { addCard } = useCards()
@@ -50,6 +51,7 @@ const AddCartForm = () => {
         onSubmit={(values) => {
           addCard(values)
           setVisible(false)
+          setCode(boldCode)
           router.navigate('/')
         }
         }
