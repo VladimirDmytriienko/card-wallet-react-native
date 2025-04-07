@@ -13,27 +13,20 @@ export const useCards = () => {
 
   const result = useQuery<Card[]>({
     queryKey: ['cards'],
-    queryFn: () => {
-     return [] },
-    initialData: [],
+      queryFn: () => Promise.resolve([]),
     staleTime: Infinity,
-  // cacheTime: Infinity, 
-  })
-  
-  const addCard = useMutation<Card, Error, Card>({
-    mutationFn: async (newCard) => {
+  });
 
-      return newCard; 
-    },
+  const addCard = useMutation<Card, Error, Card>({
+    mutationFn: async (newCard) => newCard,
     onSuccess: (newCard) => {
       queryClient.setQueryData<Card[]>(['cards'], (oldData = []) => [...oldData, newCard]);
     },
   });
 
-
   return {
     cards: result.data,
     isLoading: result.isLoading,
     addCard: addCard.mutate,
-  }
-}
+  };
+};

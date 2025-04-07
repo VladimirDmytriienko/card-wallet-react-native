@@ -17,9 +17,9 @@ export const initReactQueryPersist = async () => {
     storage: AsyncStorage,
   });
 
-  persistQueryClient({
+  await persistQueryClient({
     queryClient,
     persister: asyncStoragePersister,
-    // maxAge: 1000 * 60 * 60 * 24, // 24 часа
   });
+
 };

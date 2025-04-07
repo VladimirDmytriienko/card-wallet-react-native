@@ -90,7 +90,7 @@ const AddCartForm = () => {
                   />
                 </View>
               </View>
-              <Text>{code.data}</Text>
+
               <BarcodeWrapper backgroundColor={values.backgroundColor} shadowColor={colors.shadow}>
                 {!!code.data && code.type ? (
                   <Barcode

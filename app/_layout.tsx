@@ -9,6 +9,7 @@ import 'react-native-reanimated';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { initReactQueryPersist, queryClient } from '@/react-query/queryClient';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -29,7 +30,9 @@ export default function RootLayout() {
     prepare();
   }, [loaded]);
 
-  if (!loaded) return null
+
+  if (!loaded || !isReady) return null;
+
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -50,5 +53,5 @@ export default function RootLayout() {
       </ThemeProvider>
 
     </QueryClientProvider>
-  );
+  )
 }
