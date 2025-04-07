@@ -35,7 +35,10 @@ const CameraViewWrapper = () => {
       data,
       type: normalizedType,
       timestamp: new Date(),
-    };
+    }
+    console.log(normalizedType);
+
+    if (type === 'qr') return
     setCode(newCode);
     setTimeout(() => setIsProcessing(false), 500);
   };
