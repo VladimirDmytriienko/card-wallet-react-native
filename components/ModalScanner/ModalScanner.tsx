@@ -29,7 +29,6 @@ const ModalScanner = () => {
           presentationStyle="formSheet"
           onRequestClose={() => {
             setVisible(false)
-            // router.navigate('/card-list')
             router.back()
           }}
         >

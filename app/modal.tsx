@@ -2,54 +2,65 @@ import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Barcode } from 'expo-barcode-generator';
 import { BlurView } from 'expo-blur';
 import { Link, useLocalSearchParams } from 'expo-router';
-import { Pressable, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import Animated, { FadeIn, SlideInDown } from 'react-native-reanimated';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import Animated, { FadeIn } from 'react-native-reanimated';
+import { LinearGradient } from 'expo-linear-gradient';
+
+interface ParamsOptions {
+  title: string;
+  color: string;
+  code: string;
+  type: string;
+}
 
 export default function Modal() {
-  const { title, color } = useLocalSearchParams();
+  const { title, color, code, type } = useLocalSearchParams<ParamsOptions>();
+  const parsedColor = JSON.parse(color)
 
   return (
-    <Animated.View
-      entering={FadeIn}
-      style={{ ...styles.modal, backgroundColor: `#${color}` || 'rgba(0, 0, 0, 0.5)' }}
-    >
+    <Animated.View entering={FadeIn} style={{ flex: 1 }}>
+      {Array.isArray(parsedColor) ? (
+        <LinearGradient colors={parsedColor}
+          // style={styles.modal}
+          style={StyleSheet.absoluteFill}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
+        >
+          <Content title={title} code={code} type={type} />
+        </LinearGradient>
+      ) : (
+
+        <Content title={title + color} code={code} type={type} color={parsedColor} />
+
+      )}
+    </Animated.View>
+  );
+}
+
+function Content({ title, code, type, color }: { title: string; code: string; type: string; color?: string }) {
+  return (
+    <View style={[styles.modal, { backgroundColor: color }]}>
       <BlurView intensity={20} style={styles.header}>
-        <Text style={styles.headerTitle}>CARD TEXT {title}</Text>
+        <Text style={styles.headerTitle}> {title} </Text>
         <Link href="../" asChild>
-          <TouchableOpacity
-            style={styles.closeButton}
-          >
-            <IconSymbol
-              size={24}
-              color="#FFFFFF"
-              name="xmark.circle.fill"
-            />
+          <TouchableOpacity style={styles.closeButton}>
+            <IconSymbol size={24} color="#FFFFFF" name="xmark.circle.fill" />
           </TouchableOpacity>
         </Link>
       </BlurView>
 
-      <View
-        style={styles.barcodeWrapper}
-      >
-        <Barcode
-          value='3000003062224'
-          options={{
-            format: 'ean13',
-            background: '#FFFFFF',
-            width: 3,
-          }}
-        />
+      <View style={styles.barcodeWrapper}>
+        <Barcode value={code} options={{ format: type, background: '#FFFFFF', width: 3 }} />
       </View>
-    </Animated.View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   modal: {
-    flex: 1,
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f5f5',
   },
   header: {
     position: 'absolute',
@@ -61,8 +72,6 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     paddingHorizontal: 16,
     paddingVertical: 12,
-    borderBottomWidth: 0,
-    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   closeButton: {
