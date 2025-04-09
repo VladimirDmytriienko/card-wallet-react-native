@@ -1,11 +1,13 @@
+import { useEffect, useRef } from 'react';
+import QRCode from 'react-native-qrcode-svg';
+import { LinearGradient } from 'expo-linear-gradient';
 import { IconSymbol } from '@/components/ui/IconSymbol';
 import { Barcode } from 'expo-barcode-generator';
 import { BlurView } from 'expo-blur';
 import { Link, useLocalSearchParams } from 'expo-router';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, { FadeIn } from 'react-native-reanimated';
-import { LinearGradient } from 'expo-linear-gradient';
-
+import * as Brightness from 'expo-brightness';
 interface ParamsOptions {
   title: string;
   color: string;
@@ -14,14 +16,24 @@ interface ParamsOptions {
 }
 
 export default function Modal() {
+  const originalBrightness = useRef<number>()
   const { title, color, code, type } = useLocalSearchParams<ParamsOptions>();
   const parsedColor = JSON.parse(color)
 
+  useEffect(() => {
+    const setBrightness = async () => {
+      originalBrightness.current = await Brightness.getSystemBrightnessAsync()
+      await Brightness.setSystemBrightnessAsync(1)
+    }
+    setBrightness()
+    return () => {
+      if (originalBrightness.current !== undefined) Brightness.setSystemBrightnessAsync(originalBrightness.current)
+    }
+  }, [])
   return (
     <Animated.View entering={FadeIn} style={{ flex: 1 }}>
       {Array.isArray(parsedColor) ? (
         <LinearGradient colors={parsedColor}
-          // style={styles.modal}
           style={StyleSheet.absoluteFill}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
@@ -29,9 +41,7 @@ export default function Modal() {
           <Content title={title} code={code} type={type} />
         </LinearGradient>
       ) : (
-
-        <Content title={title + color} code={code} type={type} color={parsedColor} />
-
+        <Content title={title} code={code} type={type} color={parsedColor} />
       )}
     </Animated.View>
   );
@@ -50,7 +60,15 @@ function Content({ title, code, type, color }: { title: string; code: string; ty
       </BlurView>
 
       <View style={styles.barcodeWrapper}>
-        <Barcode value={code} options={{ format: type, background: '#FFFFFF', width: 3 }} />
+        {
+          type === 'qr' ?
+            <QRCode
+              value={code}
+              size={200}
+            />
+            :
+            <Barcode value={code} options={{ format: type, background: '#FFFFFF', width: 3 }} />
+        }
       </View>
     </View>
   );
@@ -90,5 +108,6 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 20,
     width: '96%',
+    alignItems: 'center',
   },
 })

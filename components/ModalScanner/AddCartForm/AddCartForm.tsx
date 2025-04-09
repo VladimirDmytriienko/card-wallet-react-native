@@ -18,7 +18,8 @@ import ModalHeader from '../ModalHeader/ModalHeader';
 import { useCards } from '@/react-query/useCards';
 import { router } from 'expo-router';
 import { boldCode } from '../ModalScanner';
-
+import QRCode from 'react-native-qrcode-svg';
+import { toastRef } from '@/components/Toast/Toast';
 const AddCartForm = () => {
   const { addCard } = useCards()
   const { visible, setVisible, setCode, code } = useModalScanner()
@@ -53,10 +54,11 @@ const AddCartForm = () => {
           setVisible(false)
           setCode(boldCode)
           router.navigate('/')
+          toastRef.current('successfully added');
         }
         }
       >
-        {({ handleChange, handleSubmit, values, setFieldValue }) => (
+        {({ handleChange, handleSubmit, values, setFieldValue, errors }) => (
           <>
             <ScrollView style={styles.formScroll}>
               <View style={styles.formGroup}>
@@ -68,6 +70,7 @@ const AddCartForm = () => {
                   value={values.name}
                   onChangeText={handleChange('name')}
                 />
+                {errors.name ? <Text style={styles.formLabelError}>Name is required</Text> : null}
               </View>
 
               <View style={styles.formGroup}>
@@ -92,19 +95,26 @@ const AddCartForm = () => {
                   />
                 </View>
               </View>
-
-              <BarcodeWrapper backgroundColor={values.backgroundColor} shadowColor={colors.shadow}>
-                {!!code.data && code.type ? (
-                  <Barcode
-                    value={code.data}
-                    options={{
-                      format: code.type,
-                      background: '#FFFFFF',
-                    }}
-                  />
-                ) : null}
-              </BarcodeWrapper >
-
+              {
+                code.type === 'qr' ?
+                  <BarcodeWrapper backgroundColor={values.backgroundColor} shadowColor={colors.shadow}>
+                    <QRCode
+                      value={code.data}
+                    />
+                  </BarcodeWrapper >
+                  :
+                  <BarcodeWrapper backgroundColor={values.backgroundColor} shadowColor={colors.shadow}>
+                    {!!code.data && code.type ? (
+                      <Barcode
+                        value={code.data}
+                        options={{
+                          format: code.type,
+                          background: '#FFFFFF',
+                        }}
+                      />
+                    ) : null}
+                  </BarcodeWrapper >
+              }
             </ScrollView>
 
             <View style={styles.formFooter}>
@@ -143,12 +153,17 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   formGroup: {
-    marginBottom: 20,
+    marginBottom: 16,
   },
   formLabel: {
     fontSize: 16,
     fontWeight: 'bold',
     marginBottom: 8,
+  },
+  formLabelError: {
+    fontSize: 16,
+    paddingTop: 4,
+    color: 'red',
   },
   formInput: {
     borderWidth: 1,
@@ -159,7 +174,7 @@ const styles = StyleSheet.create({
     padding: 20,
   },
   saveButton: {
-    padding: 15,
+    padding: 16,
     borderRadius: 8,
     alignItems: 'center',
   },

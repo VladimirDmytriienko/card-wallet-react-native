@@ -1,7 +1,7 @@
+import React, { useState } from 'react';
 import { Modal, View } from 'react-native'
 import CameraViewWrapper from './CameraViewWrapper/CameraViewWrapper';
 import AddCartForm from './AddCartForm/AddCartForm';
-import React, { useState } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { ModalContext } from './ModalScannerContext';
 import { ScannedCode } from './modalScannerServices';

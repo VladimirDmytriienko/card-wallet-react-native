@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { View, FlatList, Text, Dimensions, StyleSheet, StatusBar, Animated } from "react-native";
-import { Link } from 'expo-router';
+import { View, FlatList, Text, Dimensions, StyleSheet, StatusBar, Animated, Button, Pressable } from "react-native";
+import { Link, useRouter } from 'expo-router';
 import { ThemedView } from '../ThemedView';
 import { useCards } from '@/react-query/useCards';
 import EmptyList from '../EmptyList/EmptyList';
 import CameraPermission from '../CameraPermission/CameraPermission';
 import { LinearGradient } from 'expo-linear-gradient';
-
+import ModalButtomSheet from './ModalButtomSheet';
+import * as Haptics from 'expo-haptics';
 const { height, width } = Dimensions.get("window");
 const ITEM_HEIGHT = 80;
 const ITEM_SIZE = ITEM_HEIGHT + 12;
@@ -16,9 +17,11 @@ const VISIBLE_ITEMS = Math.floor(height / ITEM_HEIGHT) - 2;
 
 const CardsListComponent = () => {
   const { cards } = useCards()
-
+  const [show, setShow] = useState(false)
+  const [selectedCard, setSelectedCard] = useState(null)
+  const router = useRouter()
   const scrollY = React.useRef(new Animated.Value(0)).current;
-
+  const handler = () => { setShow(prev => !prev) }
   return (
     <ThemedView style={styles.container}>
       <CameraPermission />
@@ -39,12 +42,41 @@ const CardsListComponent = () => {
               inputRange: opacityInputRange,
               outputRange: [1, 1, 1, 0],
             });
-            const cardData = {
-              title: item.name,
-              color: JSON.stringify(item.backgroundColor),
-              code: item.data,
-              type: item.type
+
+            const onCardPress = () => {
+              router.push({
+                pathname: '/modal',
+                params: {
+                  title: item.name,
+                  color: JSON.stringify(item.backgroundColor),
+                  code: item.data,
+                  type: item.type,
+                }
+              });
             }
+
+            const onCardLongPress = () => {
+              setSelectedCard(item)
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Soft)
+              setShow(true)
+
+            }
+
+            const isGradient = Array.isArray(item.backgroundColor);
+            const cardStyle = isGradient
+              ? styles.card
+              : [styles.card, { backgroundColor: item.backgroundColor }];
+
+            const textStyle = [
+              styles.itemText,
+              {
+                color: item.backgroundColor === '#FFFFFF' ? "#000" : '#fff',
+                textShadowColor: 'rgba(0, 0, 0, 0.2)',
+                textShadowOffset: { width: 0, height: 1 },
+                textShadowRadius: 2
+              }
+            ];
+
             return (
               <Animated.View
                 style={[
@@ -55,41 +87,30 @@ const CardsListComponent = () => {
                   },
                 ]}
               >
-                {
-                  Array.isArray(item.backgroundColor) ?
-                    <Link style={{ flex: 1, width: '100%' }} href={{
-                      pathname: '/modal',
-                      params: cardData
-
-                    }} >
-                      <LinearGradient
-                        colors={item.backgroundColor}
-                        style={styles.card}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                      >
-                        <View >
-                          <Text style={[styles.itemText]}>
-                            {item.name}
-                          </Text>
-                        </View>
-                      </LinearGradient>
-                    </Link>
-                    :
-                    <Link style={{ flex: 1, width: '100%' }} href={{
-                      pathname: '/modal',
-                      params: cardData
-
-                    }} >
-                      <View style={[styles.card, { backgroundColor: item.backgroundColor }]}>
-                        <Text style={[styles.itemText, { color: item.backgroundColor === '#FFFFFF' ? "#000" : '#fff', textShadowColor: 'rgba(0, 0, 0, 0.2)', textShadowOffset: { width: 0, height: 1 }, textShadowRadius: 2 }]}>
-                          {item.name} {item.backgroundColor}
-                        </Text>
+                <Pressable
+                  onPress={onCardPress}
+                  onLongPress={onCardLongPress}
+                  style={{ flex: 1, width: '100%' }}
+                >
+                  {isGradient ? (
+                    <LinearGradient
+                      colors={item.backgroundColor}
+                      style={styles.card}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                    >
+                      <View>
+                        <Text style={styles.itemText}>{item.name}</Text>
                       </View>
-                    </Link>
-                }
+                    </LinearGradient>
+                  ) : (
+                    <View style={cardStyle}>
+                      <Text style={textStyle}>{item.name}</Text>
+                    </View>
+                  )}
+                </Pressable>
               </Animated.View>
-            )
+            );
           }}
           initialNumToRender={VISIBLE_ITEMS}
           onScroll={
@@ -106,6 +127,17 @@ const CardsListComponent = () => {
         />
       }
 
+      <ModalButtomSheet isVisible={show} onClose={handler}>
+        {selectedCard && (
+          <View style={{ padding: 16 }}>
+            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>{selectedCard.name}</Text>
+            <Text style={{ marginTop: 8 }}>Тип: {selectedCard.type}</Text>
+            <Text>Код: {selectedCard.data}</Text>
+          </View>
+        )}
+      </ModalButtomSheet>
+
+
     </ThemedView >
   );
 };
@@ -114,17 +146,13 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
   },
-
   item: {
     height: ITEM_HEIGHT,
     justifyContent: "center",
     alignItems: "center",
     borderRadius: 12,
-    backgroundColor: "#fff",
     marginVertical: 6,
     marginHorizontal: 16,
-
-
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.15,
@@ -145,7 +173,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     overflow: 'hidden',
   }
+})
 
-});
-
-export default CardsListComponent;
+export default CardsListComponent
