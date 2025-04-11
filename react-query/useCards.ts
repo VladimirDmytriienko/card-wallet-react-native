@@ -1,11 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-type Card = {
+export type Card = {
+  id: string
   data: string;
   type: string;
-  timestamp: Date;
-  name?: string;
-  notes?: string;
-  backgroundColor?: string;
+  timestamp: Date | string;
+  name: string;
+  notes?: string ;
+  backgroundColor: string | string[];
 };
 
 export const useCards = () => {
@@ -23,10 +24,35 @@ export const useCards = () => {
       queryClient.setQueryData<Card[]>(['cards'], (oldData = []) => [...oldData, newCard]);
     },
   });
-
+  const deleteCard = useMutation<void, Error, Date>({
+    mutationFn: async () => {
+      return Promise.resolve()
+    },
+    onSuccess: (_, timestampToDelete) => {
+      queryClient.setQueryData<Card[]>(['cards'], (oldData = []) => {
+        const updatedData = oldData.filter(
+          (card) => card.timestamp !== timestampToDelete
+        )
+        return updatedData;
+      })
+      // queryClient.invalidateQueries({ queryKey: ['cards'] })
+    },
+  })
+  const editCard = useMutation<void, Error, Card>({
+    mutationFn: async () => { return Promise.resolve()},
+    onSuccess: (_, updatedCardData) => {
+      queryClient.setQueryData<Card[]>(['cards'], (oldData = []) => {
+        return oldData.map(card =>
+          card.id === updatedCardData.id ? updatedCardData : card 
+        );
+      });
+    }
+  });
   return {
     cards: result.data,
     isLoading: result.isLoading,
     addCard: addCard.mutate,
+    deleteCard: deleteCard.mutate,
+    editCard: editCard.mutate
   };
 };

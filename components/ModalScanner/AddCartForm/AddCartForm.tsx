@@ -16,16 +16,21 @@ import BarcodeWrapper from './BarcodeWrapper';
 import ColorPicker from './ColorPicker';
 import ModalHeader from '../ModalHeader/ModalHeader';
 import { useCards } from '@/react-query/useCards';
-import { router } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { boldCode } from '../ModalScanner';
 import QRCode from 'react-native-qrcode-svg';
 import { toastRef } from '@/components/Toast/Toast';
+import * as Crypto from 'expo-crypto';
 const AddCartForm = () => {
-  const { addCard } = useCards()
-  const { visible, setVisible, setCode, code } = useModalScanner()
+  const router = useRouter();
+  const card = useLocalSearchParams()
+  const uuid = Crypto.randomUUID();
+  const { addCard, editCard } = useCards()
+  const { setVisible, setCode, code } = useModalScanner()
 
   const scheme = useColorScheme() || 'light';
-  const colors = Colors[scheme];
+  const colors = Colors[scheme]
+
   const inputStyle = [
     styles.formInput,
     {
@@ -35,24 +40,44 @@ const AddCartForm = () => {
     },
   ]
 
+  const normalizeCard = (card: Record<string, any>) => {
+    const backgroundColor = card.backgroundColor?.includes(',')
+      ? card.backgroundColor.split(',')
+      : card.backgroundColor || '#FFFFFF'
+
+    return {
+      id: card.id,
+      data: card.data,
+      type: card.type,
+      timestamp: new Date(card.timestamp),
+      name: card.name || '',
+      notes: card.notes || '',
+      backgroundColor,
+      edit: card.edit,
+    };
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       <ModalHeader title='Add name of a card' position='relative' />
       <Formik
-        initialValues={{
-          data: code.data,
-          type: code.type,
-          timestamp: new Date(),
-          name: '',
-          notes: '',
-          backgroundColor: '#FFFFFF',
-        }}
+        initialValues={!!code.data
+          ? {
+            id: uuid,
+            data: code.data,
+            type: code.type,
+            timestamp: new Date(),
+            name: '',
+            notes: '',
+            backgroundColor: '#FFFFFF',
+          } : normalizeCard(card)
+        }
         validationSchema={validationSchema}
         onSubmit={(values) => {
-          addCard(values)
+          !!code.data ? addCard(values) : editCard(values)
           setVisible(false)
           setCode(boldCode)
+          router.setParams({})
           router.navigate('/')
           toastRef.current('successfully added');
         }
@@ -96,19 +121,19 @@ const AddCartForm = () => {
                 </View>
               </View>
               {
-                code.type === 'qr' ?
+                values.type === 'qr' ?
                   <BarcodeWrapper backgroundColor={values.backgroundColor} shadowColor={colors.shadow}>
                     <QRCode
-                      value={code.data}
+                      value={values.data}
                     />
                   </BarcodeWrapper >
                   :
                   <BarcodeWrapper backgroundColor={values.backgroundColor} shadowColor={colors.shadow}>
-                    {!!code.data && code.type ? (
+                    {!!values.data && values.type ? (
                       <Barcode
-                        value={code.data}
+                        value={values.data}
                         options={{
-                          format: code.type,
+                          format: values.type,
                           background: '#FFFFFF',
                         }}
                       />

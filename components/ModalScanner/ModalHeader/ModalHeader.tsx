@@ -21,7 +21,7 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({ title, position }) => {
         onPress={(handleCamera) => {
           setVisible(false)
           setCode(boldCode)
-          router.back()
+          router.replace('/')
         }}
       >
         <IconSymbol
