@@ -58,7 +58,6 @@ function Content({ title, code, type, color }: { title: string; code: string; ty
           </TouchableOpacity>
         </Link>
       </BlurView>
-
       <View style={styles.barcodeWrapper}>
         {
           type === 'qr' ?

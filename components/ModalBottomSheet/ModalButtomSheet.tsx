@@ -1,4 +1,4 @@
-import { Modal, View, Text, Pressable, StyleSheet, TouchableOpacity } from 'react-native';
+import { Modal, View, StyleSheet } from 'react-native';
 import { PropsWithChildren } from 'react';
 
 

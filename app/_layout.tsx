@@ -8,7 +8,7 @@ import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { initReactQueryPersist, queryClient } from '@/react-query/queryClient';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import Toast from '@/components/Toast/Toast';
 
 SplashScreen.preventAutoHideAsync();

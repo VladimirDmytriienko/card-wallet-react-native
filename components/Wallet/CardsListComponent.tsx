@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { View, FlatList, Text, Dimensions, StyleSheet, StatusBar, Animated, Button, Pressable } from "react-native";
+import React, { useState } from "react";
+import { Dimensions, StatusBar, Animated } from "react-native";
 
 import { ThemedView } from '../ThemedView';
 import { Card, useCards } from '@/react-query/useCards';
