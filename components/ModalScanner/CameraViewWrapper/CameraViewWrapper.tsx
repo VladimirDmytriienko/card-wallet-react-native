@@ -1,17 +1,10 @@
 import {
-  Modal,
-  SafeAreaView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
-  TextInput,
-  ScrollView,
 } from 'react-native';
 import {
   CameraView,
-  CameraType,
-  useCameraPermissions,
   BarcodeScanningResult,
   BarcodeType,
 } from 'expo-camera';
@@ -23,7 +16,7 @@ import ModalHeader from '../ModalHeader/ModalHeader';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const CameraViewWrapper = () => {
-  const { visible, setVisible, setCode, code } = useModalScanner();
+  const { setCode } = useModalScanner();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleBarcodeScanned = async ({ data, type }: BarcodeScanningResult) => {
@@ -36,10 +29,7 @@ const CameraViewWrapper = () => {
       type: normalizedType,
       timestamp: new Date(),
     }
-    console.log(normalizedType);
-
-    if (type === 'qr') return
-    setCode(newCode);
+    setCode(newCode)
     setTimeout(() => setIsProcessing(false), 500);
   };
 

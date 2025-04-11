@@ -1,5 +1,5 @@
 import React from 'react'
-import { Modal, Text, View, TouchableOpacity, StyleSheet } from 'react-native'
+import { Text, TouchableOpacity, StyleSheet } from 'react-native'
 import { BlurView } from 'expo-blur';
 import { IconSymbol } from '@/components/ui/IconSymbol'
 import { useModalScanner } from '@/components/ModalScanner/ModalScannerContext';
@@ -11,7 +11,7 @@ interface ModalHeaderProps {
 }
 
 const ModalHeader: React.FC<ModalHeaderProps> = ({ title, position }) => {
-  const { visible, setVisible, setCode, code } = useModalScanner()
+  const { setVisible, setCode } = useModalScanner()
   const router = useRouter();
   return (
     <BlurView intensity={20} style={styles.header}>
@@ -21,7 +21,7 @@ const ModalHeader: React.FC<ModalHeaderProps> = ({ title, position }) => {
         onPress={(handleCamera) => {
           setVisible(false)
           setCode(boldCode)
-          router.back()
+          router.replace('/')
         }}
       >
         <IconSymbol

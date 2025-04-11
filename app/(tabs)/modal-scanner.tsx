@@ -7,8 +7,9 @@ export default function ModalScannerPage() {
 
   return (
     <View >
-      <ModalScanner />
       <CameraPermission />
+      <ModalScanner />
+
     </View>
   );
 }
