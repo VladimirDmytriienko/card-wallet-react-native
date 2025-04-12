@@ -1,4 +1,12 @@
-# Currently development in work 😊🚀
+#  Local firs part is done 😊🚀🚀
+# Enjoy, leave comment 
+
+https://github.com/user-attachments/assets/01cd0136-2182-421b-a8b6-adea4fa9e7b0
+
+
+
+
+
 # Welcome to your Expo app 👋
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
