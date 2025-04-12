@@ -89,7 +89,7 @@ const Toast = () => {
 const styles = StyleSheet.create({
   container: {
     position: "absolute",
-    bottom: 100,
+    bottom: 150,
     alignSelf: "center",
     alignItems: "center",
     width: "100%",

@@ -66,7 +66,7 @@ function Content({ title, code, type, color }: { title: string; code: string; ty
               size={200}
             />
             :
-            <Barcode value={code} options={{ format: type, background: '#FFFFFF', width: 3 }} />
+            <Barcode value={code} options={{ format: type, background: '#FFFFFF', width: 2 }} />
         }
       </View>
     </View>

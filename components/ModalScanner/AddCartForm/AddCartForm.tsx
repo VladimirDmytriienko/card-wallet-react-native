@@ -77,8 +77,7 @@ const AddCartForm = () => {
           !!code.data ? addCard(values) : editCard(values)
           setVisible(false)
           setCode(boldCode)
-          router.setParams({})
-          router.navigate('/')
+          router.push('../')
           toastRef.current('successfully added');
         }
         }

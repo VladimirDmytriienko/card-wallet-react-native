@@ -24,7 +24,7 @@ const EditModalWrapper: React.FC<Props> = ({ selectedCard, onClose }) => {
   const handleDelete = async () => {
     deleteCard(selectedCard?.timestamp, {
       onSuccess: () => {
-        toastRef.current('successfully deleted');
+        toastRef.current('Successfully deleted');
       },
       onError: () => {
         toastRef.current('Sorry unsuccessfully');
